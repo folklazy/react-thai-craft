@@ -25,11 +25,11 @@ const PhotoGrid = ({ images, columns = 2, gap = 4 }: PhotoGridProps) => {
   }, [images]);
 
   // Distribute images into columns
-  const columnImages = Array.from({ length: columns }, () => [] as typeof images);
+  const columnImages = Array.from({ length: columns }, () => [] as { image: typeof images[0], index: number }[]);
   
   images.forEach((image, index) => {
     const columnIndex = index % columns;
-    columnImages[columnIndex].push({ ...image, index });
+    columnImages[columnIndex].push({ image, index });
   });
 
   return (
@@ -42,18 +42,18 @@ const PhotoGrid = ({ images, columns = 2, gap = 4 }: PhotoGridProps) => {
     >
       {columnImages.map((column, colIndex) => (
         <div key={`column-${colIndex}`} className="flex flex-col space-y-4">
-          {column.map((image) => (
+          {column.map(({ image, index }) => (
             <div 
-              key={`image-${image.index}`} 
+              key={`image-${index}`} 
               className={`photo-card overflow-hidden transition-opacity duration-500 ${
-                loaded[image.index] ? "opacity-100" : "opacity-0"
+                loaded[index] ? "opacity-100" : "opacity-0"
               }`}
             >
               <img
                 src={image.src}
                 alt={image.alt}
                 className="w-full h-auto object-cover rounded-lg"
-                onLoad={() => handleImageLoad(image.index)}
+                onLoad={() => handleImageLoad(index)}
                 loading="lazy"
               />
             </div>
